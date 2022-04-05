@@ -1,4 +1,5 @@
-﻿using System;
+﻿using GalaSoft.MvvmLight.Messaging;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -23,6 +24,16 @@ namespace ATQ1MR_SG1_21_22_2.WpfClient
         public MainWindow()
         {
             InitializeComponent();
+        }
+
+        private void WindowLoaded(object sender, RoutedEventArgs e)
+        {
+            Messenger.Default.Register<string[]>(this, "BLOperationResult", (msgs) => MessageBox.Show(String.Join(Environment.NewLine, msgs), "BL result", MessageBoxButton.OK, MessageBoxImage.Information));
+        }
+
+        private void WindowClosing(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            Messenger.Default.Unregister(this);
         }
     }
 }

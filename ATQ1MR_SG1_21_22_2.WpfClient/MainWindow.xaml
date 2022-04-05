@@ -3,10 +3,74 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:ATQ1MR_SG1_21_22_2.WpfClient"
+        xmlns:ViewModels="clr-namespace:ATQ1MR_SG1_21_22_2.WpfClient.ViewModels"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
-    <Grid>
-
+        Title="ProcessorsWindow" Height="450" Width="800" Loaded="WindowLoaded" Closing="WindowClosing">
+    <Window.Resources>
+        <ViewModels:MainWindowVM x:Key="VM"/>
+    </Window.Resources>
+    <Grid DataContext="{StaticResource VM}">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="30"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="50"/>
+        </Grid.RowDefinitions>
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <Label Grid.Column="0" Content="ID" HorizontalContentAlignment="Center"/>
+            <Label Grid.Column="1" Content="Brand ID" HorizontalContentAlignment="Center"/>
+            <Label Grid.Column="2" Content="Name" HorizontalContentAlignment="Center"/>
+            <Label Grid.Column="3" Content="Socket" HorizontalContentAlignment="Center"/>
+            <Label Grid.Column="4" Content="Cores" HorizontalContentAlignment="Center"/>
+            <Label Grid.Column="5" Content="Threads" HorizontalContentAlignment="Center"/>
+            <Label Grid.Column="6" Content="Base clock" HorizontalContentAlignment="Center"/>
+            <Label Grid.Column="7" Content="Boost clock" HorizontalContentAlignment="Center"/>
+            <Label Grid.Column="8" Content="Price" HorizontalContentAlignment="Center"/>
+        </Grid>
+        <ListBox ItemsSource="{Binding Processors}" SelectedItem="{Binding CurrentProcessor}" HorizontalContentAlignment="Stretch" Grid.Row="1">
+            <ListBox.ItemTemplate>
+                <DataTemplate>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <Label Grid.Column="0" Content="{Binding Id}" HorizontalAlignment="Center"/>
+                        <Label Grid.Column="1" Content="{Binding BrandId}" HorizontalAlignment="Center"/>
+                        <Label Grid.Column="2" Content="{Binding Name}" HorizontalAlignment="Center"/>
+                        <Label Grid.Column="3" Content="{Binding Socket}" HorizontalAlignment="Center"/>
+                        <Label Grid.Column="4" Content="{Binding Cores}" HorizontalAlignment="Center"/>
+                        <Label Grid.Column="5" Content="{Binding Threads}" HorizontalAlignment="Center"/>
+                        <Label Grid.Column="6" Content="{Binding BaseClock}" HorizontalAlignment="Center"/>
+                        <Label Grid.Column="7" Content="{Binding BoostClock}" HorizontalAlignment="Center"/>
+                        <Label Grid.Column="8" Content="{Binding Price}" HorizontalAlignment="Center"/>
+                    </Grid>
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+        </ListBox>
+        <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Center">
+            <Button Content="Load" Margin="5" MaxHeight="30" MinWidth="50" Command="{Binding LoadCommand}"/>
+            <Button Content="View" Margin="5" MaxHeight="30" MinWidth="50" Command="{Binding ViewCommand}"/>
+            <Button Content="Add" Margin="5" MaxHeight="30" MinWidth="50" Command="{Binding AddCommand}"/>
+            <Button Content="Modify" Margin="5" MaxHeight="30" MinWidth="50" Command="{Binding ModifyCommand}"/>
+            <Button Content="Delete" Margin="5" MaxHeight="30" MinWidth="50" Command="{Binding DeleteCommand}"/>
+        </StackPanel>
     </Grid>
 </Window>

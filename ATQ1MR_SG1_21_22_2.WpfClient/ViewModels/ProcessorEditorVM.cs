@@ -17,7 +17,9 @@ namespace ATQ1MR_SG1_21_22_2.WpfClient.ViewModels
         public ProcessorModel CurrentProcessor
         {
             get { return currentProcessor; }
-            set { Set(ref currentProcessor, value); }
+            set { Set(ref currentProcessor, value);
+                SelectedBrand = AvailableBrands?.SingleOrDefault(x => x.Id == currentProcessor.BrandId);
+            }
         }
         private PBrandModel selectedBrand;
 
@@ -52,7 +54,7 @@ namespace ATQ1MR_SG1_21_22_2.WpfClient.ViewModels
                     new PBrandModel(2, "AMD")
                 };
 
-                SelectedBrand = AvailableBrands[2];
+                SelectedBrand = AvailableBrands[1];
                 CurrentProcessor.Name = "Ryzen 5 3600";
                 CurrentProcessor.Socket = "AM4";
                 CurrentProcessor.Cores = 6;
