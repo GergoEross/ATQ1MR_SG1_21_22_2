@@ -26,6 +26,8 @@ namespace ATQ1MR_HFT_2021221.Models.Entities
         public int Cores { get; set; }
         public int Threads { get; set; }
         public int Price { get; set; }
+        public bool IsOvercolckable { get; set; }
+        public DateTime ReleaseDate { get; set; }
         public int BrandId { get; set; }
         [JsonIgnore]
         [NotMapped]

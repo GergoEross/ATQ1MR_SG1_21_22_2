@@ -39,10 +39,10 @@ namespace ATQ1MR_SG1_21_22_2.WpfClient.ViewModels
 
             if (IsInDesignMode)
             {
-                Processors.Add(new ProcessorModel(1, "AM4", "Ryzen 5 3600", 3.6, 4.2, 6, 12, 110000, 2));
-                var icpu = new ProcessorModel(2, "LGA-1151(300)", "Core i9-9900K", 3.6, 5.0, 8, 16, 134000, 1);
+                Processors.Add(new ProcessorModel(1, "AM4", "Ryzen 5 3600", 3.6, 4.2, 6, 12, 110000, 2, true, new DateTime(2019, 6, 7)));
+                var icpu = new ProcessorModel(2, "LGA-1151(300)", "Core i9-9900K", 3.6, 5.0, 8, 16, 134000, 1, false, new DateTime(2018, 10, 18));
                 Processors.Add(icpu);
-                Processors.Add(new ProcessorModel(3, "AM4", "Ryzen 5 5600X", 3.7, 4.6, 6, 12, 123000, 2));
+                Processors.Add(new ProcessorModel(3, "AM4", "Ryzen 5 5600X", 3.7, 4.6, 6, 12, 123000, 2, true, new DateTime(2020, 11, 5)));
                 CurrentProcessor = icpu;
             }
 

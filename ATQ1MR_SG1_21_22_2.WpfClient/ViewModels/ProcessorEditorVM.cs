@@ -62,6 +62,8 @@ namespace ATQ1MR_SG1_21_22_2.WpfClient.ViewModels
                 CurrentProcessor.BaseClock = 3.6;
                 CurrentProcessor.BoostClock = 4.2;
                 CurrentProcessor.Price = 110000;
+                CurrentProcessor.IsOverclockable = true;
+                CurrentProcessor.ReleaseDate = new DateTime(2019, 6, 7);
             }
             else
             {

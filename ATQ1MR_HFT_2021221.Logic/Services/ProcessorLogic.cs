@@ -35,23 +35,29 @@ namespace ATQ1MR_HFT_2021221.Logic.Services
         }
         public Processor Create(Processor entity)
         {
-            if (entity != null && entity.Name != "")
+            if (entity == null)
             {
-                var v = _processorRepository.Read(entity.Id);
-                if (v == null)
-                {
-                    var result = _processorRepository.Create(entity);
-                    return result;
-                }
-                else
-                {
-                    throw new Exception("Already exists!");
-                }
+                throw new Exception("Cannot be null!");
+            }
+            if (string.IsNullOrWhiteSpace(entity.Name))
+            {
+                throw new Exception("Must give a name!");
+            }
+            if (string.IsNullOrWhiteSpace(entity.Socket))
+            {
+                throw new Exception("Must have a socket!");
+            }
+            var v = _processorRepository.Read(entity.Id);
+            if (v == null)
+            {
+                var result = _processorRepository.Create(entity);
+                return result;
             }
             else
             {
-                throw new Exception("Must contain the required data!");
+                throw new Exception("Already exists!");
             }
+
         }
         public Processor Update(Processor entity)
         {
@@ -68,12 +74,14 @@ namespace ATQ1MR_HFT_2021221.Logic.Services
                     v.Price = entity.Price;
                     v.Socket = entity.Socket;
                     v.Threads = entity.Threads;
+                    v.IsOvercolckable = entity.IsOvercolckable;
+                    v.ReleaseDate = entity.ReleaseDate;
                     var result = _processorRepository.Update(v);
                     return result;
                 }
                 else
                 {
-                    throw new Exception("No entity found!");
+                    throw new Exception("No processor found!");
                 }
             }
             else
@@ -90,7 +98,7 @@ namespace ATQ1MR_HFT_2021221.Logic.Services
             }
             else
             {
-                throw new Exception("No entity found!");
+                throw new Exception("No processor found!");
             }
         }
         public IEnumerable<ProcessorWhitHighestPriceMotherboardModel> ProcessorWhitHighestPriceMotherboard()

@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:ViewModels="clr-namespace:ATQ1MR_SG1_21_22_2.WpfClient.ViewModels"
         mc:Ignorable="d"
-        Title="ProcessorsWindow" Height="450" Width="800" Loaded="WindowLoaded" Closing="WindowClosing">
+        Title="ProcessorsWindow" Height="450" Width="1000" ResizeMode="NoResize" Loaded="WindowLoaded" Closing="WindowClosing">
     <Window.Resources>
         <ViewModels:MainWindowVM x:Key="VM"/>
     </Window.Resources>
@@ -26,6 +26,8 @@
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
             <Label Grid.Column="0" Content="ID" HorizontalContentAlignment="Center"/>
             <Label Grid.Column="1" Content="Brand ID" HorizontalContentAlignment="Center"/>
@@ -35,13 +37,17 @@
             <Label Grid.Column="5" Content="Threads" HorizontalContentAlignment="Center"/>
             <Label Grid.Column="6" Content="Base clock" HorizontalContentAlignment="Center"/>
             <Label Grid.Column="7" Content="Boost clock" HorizontalContentAlignment="Center"/>
-            <Label Grid.Column="8" Content="Price" HorizontalContentAlignment="Center"/>
+            <Label Grid.Column="8" Content="Overclockable" HorizontalContentAlignment="Center"/>
+            <Label Grid.Column="9" Content="Release date" HorizontalContentAlignment="Center"/>
+            <Label Grid.Column="10" Content="Price" HorizontalContentAlignment="Center"/>
         </Grid>
         <ListBox ItemsSource="{Binding Processors}" SelectedItem="{Binding CurrentProcessor}" HorizontalContentAlignment="Stretch" Grid.Row="1">
             <ListBox.ItemTemplate>
                 <DataTemplate>
                     <Grid>
                         <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
                             <ColumnDefinition Width="*"/>
                             <ColumnDefinition Width="*"/>
                             <ColumnDefinition Width="*"/>
@@ -60,7 +66,9 @@
                         <Label Grid.Column="5" Content="{Binding Threads}" HorizontalAlignment="Center"/>
                         <Label Grid.Column="6" Content="{Binding BaseClock}" HorizontalAlignment="Center"/>
                         <Label Grid.Column="7" Content="{Binding BoostClock}" HorizontalAlignment="Center"/>
-                        <Label Grid.Column="8" Content="{Binding Price}" HorizontalAlignment="Center"/>
+                        <CheckBox Grid.Column="8" IsChecked="{Binding IsOverclockable}" IsEnabled="False" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        <TextBlock Grid.Column="9" Text="{Binding ReleaseDate, StringFormat=yyyy.MM.dd}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        <Label Grid.Column="10" Content="{Binding Price}" HorizontalAlignment="Center"/>
                     </Grid>
                 </DataTemplate>
             </ListBox.ItemTemplate>

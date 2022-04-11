@@ -40,10 +40,10 @@ namespace ATQ1MR_HFT_2021221.Data
             var mboard1 = new Motherboard() { Id = 1, BrandId = msi.Id, Chipset = "B450", Price = 30000, Socket = "AM4", Type = "TOMAHAWK MAX" };
             var mboard2 = new Motherboard() { Id = 2, BrandId = asus.Id, Chipset = "Z390", Price = 40000, Socket = "LGA-1151(300)", Type = "MPG GAMING PLUS" };
             var mboard3 = new Motherboard() { Id = 3, BrandId = gigabyte.Id, Chipset = "B450", Price = 32000, Socket = "AM4", Type = "AORUS PRO" };
-            var cpu1 = new Processor() { Id = 1, BrandId = amd.Id, Name = "Ryzen 5 3600", Socket = "AM4", Cores = 6, Threads = 12, BaseClock = 3.6, BoostClock = 4.2, Price = 110000 };
-            var cpu2 = new Processor() { Id = 2, BrandId = intel.Id, Name = "Core i9-9900K", Socket = "LGA-1151(300)", Cores = 8, Threads = 16, BaseClock = 3.6, BoostClock = 5, Price = 134000 };
-            var cpu3 = new Processor() { Id = 3, BrandId = amd.Id, Name = "Ryzen 5 5600X", Socket = "AM4", Cores = 6, Threads = 12, BaseClock = 3.7, BoostClock = 4.6, Price = 122000 };
-            var cpu4 = new Processor() { Id = 4, BrandId = intel.Id, Name = "Core i5-9400F", Socket = "LGA-1151(300)", Cores = 6, Threads = 6, BaseClock = 2.9, BoostClock = 4.1, Price = 57000 };
+            var cpu1 = new Processor() { Id = 1, BrandId = amd.Id, Name = "Ryzen 5 3600", Socket = "AM4", Cores = 6, Threads = 12, BaseClock = 3.6, BoostClock = 4.2, Price = 110000, IsOvercolckable = false, ReleaseDate = new DateTime(2019, 6, 7) };
+            var cpu2 = new Processor() { Id = 2, BrandId = intel.Id, Name = "Core i9-9900K", Socket = "LGA-1151(300)", Cores = 8, Threads = 16, BaseClock = 3.6, BoostClock = 5, Price = 134000, IsOvercolckable = true, ReleaseDate = new DateTime(2018, 10, 18) };
+            var cpu3 = new Processor() { Id = 3, BrandId = amd.Id, Name = "Ryzen 5 5600X", Socket = "AM4", Cores = 6, Threads = 12, BaseClock = 3.7, BoostClock = 4.6, Price = 122000, IsOvercolckable = true, ReleaseDate = new DateTime(2020, 11, 5) };
+            var cpu4 = new Processor() { Id = 4, BrandId = intel.Id, Name = "Core i5-9400F", Socket = "LGA-1151(300)", Cores = 6, Threads = 6, BaseClock = 2.9, BoostClock = 4.1, Price = 57000, IsOvercolckable = false, ReleaseDate = new DateTime(2019, 1, 7) };
 
             modelBuilder.Entity<MBrand>().HasData(msi, asus, gigabyte);
             modelBuilder.Entity<PBrand>().HasData(intel, amd);

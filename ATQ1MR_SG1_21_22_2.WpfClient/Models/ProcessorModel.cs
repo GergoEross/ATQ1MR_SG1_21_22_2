@@ -1,4 +1,5 @@
 ﻿using GalaSoft.MvvmLight;
+using System;
 
 namespace ATQ1MR_SG1_21_22_2.WpfClient.Models
 {
@@ -67,11 +68,27 @@ namespace ATQ1MR_SG1_21_22_2.WpfClient.Models
             get { return brandId; }
             set { Set(ref brandId, value); }
         }
+        private bool isOverclockable;
+
+        public bool IsOverclockable
+        {
+            get { return isOverclockable; }
+            set { Set(ref isOverclockable, value); }
+        }
+        private DateTime releaseDate;
+
+        public DateTime ReleaseDate
+        {
+            get { return releaseDate; }
+            set { Set(ref releaseDate, value); }
+        }
+
+
         public ProcessorModel()
         {
-
+            releaseDate = DateTime.Now;
         }
-        public ProcessorModel(int id, string socket, string name, double baseClock, double boostClock, int cores, int threads, int price, int brandId)
+        public ProcessorModel(int id, string socket, string name, double baseClock, double boostClock, int cores, int threads, int price, int brandId, bool isOverclockable, DateTime releaseDate)
         {
             this.id = id;
             this.socket = socket;
@@ -82,6 +99,8 @@ namespace ATQ1MR_SG1_21_22_2.WpfClient.Models
             this.threads = threads;
             this.price = price;
             this.brandId = brandId;
+            this.isOverclockable = isOverclockable;
+            this.releaseDate = releaseDate;
         }
         public ProcessorModel(ProcessorModel other)
         {
@@ -94,6 +113,8 @@ namespace ATQ1MR_SG1_21_22_2.WpfClient.Models
             threads = other.Threads;
             price = other.Price;
             brandId = other.BrandId;
+            isOverclockable = other.IsOverclockable;
+            releaseDate = other.ReleaseDate;
         }
     }
 }

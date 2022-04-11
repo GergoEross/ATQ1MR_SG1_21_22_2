@@ -48,7 +48,9 @@ namespace ATQ1MR_SG1_21_22_2.WpfClient.BL.Implementation
                         Cores = newProcessor.Cores,
                         Threads = newProcessor.Threads,
                         Price = newProcessor.Price,
-                        BrandId = newProcessor.BrandId
+                        BrandId = newProcessor.BrandId,
+                        IsOvercolckable = newProcessor.IsOverclockable,
+                        ReleaseDate = newProcessor.ReleaseDate
                     });
 
                     processorToEdit = newProcessor;
@@ -106,7 +108,7 @@ namespace ATQ1MR_SG1_21_22_2.WpfClient.BL.Implementation
             }
             else
             {
-                SendMessage("Processor deletion failed");
+                SendMessage("Must select an item!");
             }
         }
 
@@ -115,56 +117,71 @@ namespace ATQ1MR_SG1_21_22_2.WpfClient.BL.Implementation
         {
             ProcessorModel processorToEdit = processor;
             bool operationFinished = false;
-
-            do
+            if (processor != null)
             {
-                var editedProcessor = editorService.EditProcessor(processorToEdit);
-
-                if (editedProcessor != null)
+                do
                 {
-                    var operationResult = processorHttpService.Update(new ProcessorDTO()
-                    {
-                        Id = editedProcessor.Id,
-                        Socket = editedProcessor.Socket,
-                        Name = editedProcessor.Name,
-                        BaseClock = editedProcessor.BaseClock,
-                        BoostClock = editedProcessor.BoostClock,
-                        Cores = editedProcessor.Cores,
-                        Threads = editedProcessor.Threads,
-                        Price = editedProcessor.Price,
-                        BrandId = editedProcessor.BrandId
-                    });
+                    var editedProcessor = editorService.EditProcessor(processorToEdit);
 
-                    processorToEdit = editedProcessor;
-                    operationFinished = operationResult.IsSuccess;
-
-                    if (operationResult.IsSuccess)
+                    if (editedProcessor != null)
                     {
-                        RefreshCollectionFromServer(collection);
-                        SendMessage("Processor midification successful!");
+                        var operationResult = processorHttpService.Update(new ProcessorDTO()
+                        {
+                            Id = editedProcessor.Id,
+                            Socket = editedProcessor.Socket,
+                            Name = editedProcessor.Name,
+                            BaseClock = editedProcessor.BaseClock,
+                            BoostClock = editedProcessor.BoostClock,
+                            Cores = editedProcessor.Cores,
+                            Threads = editedProcessor.Threads,
+                            Price = editedProcessor.Price,
+                            BrandId = editedProcessor.BrandId,
+                            IsOvercolckable = editedProcessor.IsOverclockable,
+                            ReleaseDate = editedProcessor.ReleaseDate
+                        });
+
+                        processorToEdit = editedProcessor;
+                        operationFinished = operationResult.IsSuccess;
+
+                        if (operationResult.IsSuccess)
+                        {
+                            RefreshCollectionFromServer(collection);
+                            SendMessage("Processor midification successful!");
+                        }
+                        else
+                        {
+                            SendMessage(operationResult.Messages.ToArray());
+                        }
                     }
                     else
                     {
-                        SendMessage(operationResult.Messages.ToArray());
+                        SendMessage("Processor modification cancelled!");
+                        operationFinished = true;
                     }
-                }
-                else
-                {
-                    SendMessage("Processor modification cancelled!");
-                    operationFinished = true;
-                }
-            } while (!operationFinished);
+                } while (!operationFinished);
+            }
+            else
+            {
+                SendMessage("Must select an item");
+            }
         }
 
         public void ViewProcessor(ProcessorModel processor)
         {
-            displayService.Display(processor);
+            if (processor != null)
+            {
+                displayService.Display(processor);
+            }
+            else
+            {
+                SendMessage("Must select an item!");
+            }
         }
         public IList<ProcessorModel> GetAll()
         {
             var processors = processorHttpService.GetAll<Processor>();
 
-            return processors.Select(x => new ProcessorModel(x.Id, x.Socket, x.Name, x.BaseClock, x.BoostClock, x.Cores, x.Threads, x.Price, x.BrandId)).ToList();
+            return processors.Select(x => new ProcessorModel(x.Id, x.Socket, x.Name, x.BaseClock, x.BoostClock, x.Cores, x.Threads, x.Price, x.BrandId, x.IsOvercolckable, x.ReleaseDate)).ToList();
         }
 
         public IList<PBrandModel> GetAllBrands()
