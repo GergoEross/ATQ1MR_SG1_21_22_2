@@ -45,7 +45,7 @@
                             <td>{{processor.threads}}</td>
                             <td>{{processor.baseClock}}</td>
                             <td>{{processor.boostClock}}</td>
-                            <td><input type="checkbox" v-model="processor.isOverclockable"/></td>
+                            <td><input type="checkbox" disabled="disabled" v-model="processor.isOvercolckable"/></td>
                             <td>{{processor.releaseDate.split("T")[0]}}</td>
                             <td>{{processor.price}}</td>
                             <td style="width:20%;text-align:right">
@@ -69,6 +69,7 @@
 
 <script src="~/lib/vue/dist/vue.js"></script>
 <script src="~/lib/axios/dist/axios.js"></script>
+
 
 <script type="text/javascript">
     const axiP = axios.create({
@@ -113,7 +114,7 @@
                 this.operationMode = 3
             },
             deleteProcessor: function (processor) {
-                axiP.delete('Delete/' + processor.Id).then((response) => {
+                axiP.delete('Delete/' + processor.id).then((response) => {
                     if (response.data.isSuccess) {
                         this.messages.push("Processor deleted successfully!")
                         this.loadProcessors()
@@ -168,7 +169,7 @@
         methods: {
             save() {
                 if (this.isEdit) {
-                    axiP.put('Update', this.innerProcessor).the(this.handleSuccess).catch((err) => {
+                    axiP.put('Update', this.innerProcessor).then(this.handleSuccess).catch((err) => {
                         console.log(err)
                         this.handleError(['Error occured during processing!'])
                     })
@@ -195,21 +196,21 @@
             }
         },
         created: function () {
-            if (this.processor.Id != undefined) {
+            if (this.processor.id != undefined) {
                 this.isEdit = true
 
                 this.innerProcessor = {
-                    id: this.processors.Id,
-                    brandId: this.processor.BrandId,
-                    name: this.processor.Name,
-                    socket: this.processor.Socket,
-                    cores: this.processor.Cores,
-                    threads: this.processor.Threads,
-                    baseClock: this.processor.BaseClock,
-                    boostClock: this.processor.BoostClock,
-                    isOverclockable: this.processor.IsOverclockable,
-                    releaseDate: this.processor.ReleaseDate,
-                    price: this.processor.Price
+                    id: this.processor.id,
+                    brandId: this.processor.brandId,
+                    name: this.processor.name,
+                    socket: this.processor.socket,
+                    cores: this.processor.cores,
+                    threads: this.processor.threads,
+                    baseClock: this.processor.baseClock,
+                    boostClock: this.processor.boostClock,
+                    isOvercolckable: this.processor.isOvercolckable,
+                    releaseDate: this.processor.releaseDate.split('T')[0],
+                    price: this.processor.price
                 }
             } else {
                 this.innerProcessor = {
@@ -221,8 +222,8 @@
                     threads: 0,
                     baseClock: 0.0,
                     boostClock: 0.0,
-                    isOverclockable: false,
-                    releaseDate: new Date(),
+                    isOvercolckable: false,
+                    releaseDate: '',
                     price: 0
                 }
             }
@@ -271,12 +272,12 @@
             <label>{{processor.boostClock}}</label>
         </div>
         <div>
-            <strong>Overclockable</strong><br />
-            <label>{{processor.isOverclockable}}</label>
+            <strong>Overclockable</strong>
+            <input type="checkbox" disabled="disabled" v-model="processor.isOvercolckable" />
         </div>
         <div>
             <strong>Release date</strong><br />
-            <label>{{processor.releaseDate}}</label>
+            <label>{{processor.releaseDate.split("T")[0]}}</label>
         </div>
         <div>
             <strong>Price</strong><br />
@@ -293,7 +294,7 @@
         <div>
             <strong>Brand</strong><br />
             <select id="brand-selector" v-model="innerProcessor.brandId" class="form-control">
-                <option v-for="brand in brands" v-bind:value="brand.Id">{{brand.name}}</option>
+                <option v-for="brand in brands" v-bind:value="brand.id">{{brand.name}}</option>
             </select>
         </div>
         <div>
@@ -321,12 +322,12 @@
             <input type="number" v-model="innerProcessor.boostClock" class="form-control"/>
         </div>
         <div>
-            <strong>Overclockable</strong><br />
-            <input type="checkbox" v-model="innerProcessor.isOverclockable" class="form-control"/>
+            <strong>Overclockable</strong>
+            <input type="checkbox" v-model="innerProcessor.isOvercolckable"/>
         </div>
         <div>
             <strong>Release date</strong><br />
-            <input type="datetime" v-model="innerProcessor.releaseDate" class="form-control"/>
+            <input type="date" v-model="innerProcessor.releaseDate" class="form-control"/>
         </div>
         <div>
             <strong>Price</strong><br />
