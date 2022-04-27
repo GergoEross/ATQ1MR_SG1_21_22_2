@@ -1,0 +1,344 @@
+﻿@{
+    ViewData["Title"] = "Home Page";
+}
+
+<div class="text-center">
+    <h1 class="display-4">Welcome to my processor handler app!</h1>
+    <div id="processor-handler-app">
+        <div class="button-container pb-3" style="text-align:center">
+            <button class="btn btn-secondary" v-on:click="loadProcessors">Load</button>
+            <button class="btn btn-success" v-on:click="createProcessor">Create</button>
+            <button v-if="enabledBackToList" class="btn btn-secondary" v-on:click="backToList">Back to list</button>
+        </div>
+        <div id="content" style="display: flex; justify-content: center; flex-wrap: wrap">
+            <div v-if="errors.length > 0">
+                <span v-for="msg in errors" style="color:red;font-weight:bold">{{msg}}</span>
+            </div>
+            <div v-if="messages.length > 0">
+                <span v-for="msg in messages" style="color:green">{{msg}}</span>
+            </div>
+            <template v-if="operationMode == 0">
+                <table class="table table-striped table-hover">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Brand ID</th>
+                            <th>Name</th>
+                            <th>Socket</th>
+                            <th>Cores</th>
+                            <th>Threads</th>
+                            <th>Base clock</th>
+                            <th>Boost clock</th>
+                            <th>Overclockable</th>
+                            <th>Release date</th>
+                            <th>Price</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr v-for="processor in processors">
+                            <td>{{processor.id}}</td>
+                            <td>{{processor.brandId}}</td>
+                            <td>{{processor.name}}</td>
+                            <td>{{processor.socket}}</td>
+                            <td>{{processor.cores}}</td>
+                            <td>{{processor.threads}}</td>
+                            <td>{{processor.baseClock}}</td>
+                            <td>{{processor.boostClock}}</td>
+                            <td><input type="checkbox" disabled="disabled" v-model="processor.isOvercolckable"/></td>
+                            <td>{{processor.releaseDate.split("T")[0]}}</td>
+                            <td>{{processor.price}}</td>
+                            <td style="width:20%;text-align:right">
+                                <button class="btn btn-info" v-on:click="viewProcessor(processor)">View</button>
+                                <button class="btn btn-warning" v-on:click="editProcessor(processor)">Edit</button>
+                                <button class="btn btn-danger" v-on:click="deleteProcessor(processor)">Delete</button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </template>
+            <template v-else-if="operationMode == 1">
+                <view-component v-bind:processor="selectedProcessor"></view-component>
+            </template>
+            <template v-else-if="operationMode == 2">
+                <editor-component v-on:saved="savedSuccessfully" v-on:cancelled="operationCancelled"></editor-component>
+            </template>
+            <template v-else>
+                <editor-component v-bind:processor="selectedProcessor" v-on:saved="savedSuccessfully" v-on:cancelled="operationCancelled"></editor-component>
+            </template>
+        </div>
+    </div>
+</div>
+
+<script src="~/lib/vue/dist/vue.js"></script>
+<script src="~/lib/axios/dist/axios.js"></script>
+
+
+<script type="text/javascript">
+    const axiP = axios.create({
+        baseURL: 'http://localhost:51252/api/Processor/'
+    })
+    const axiB = axios.create({
+        baseURL: 'http://localhost:51252/api/PBrand/'
+    })
+
+    var processorHandlerApp = new Vue({
+        el: '#processor-handler-app',
+        data: {
+            processors: [],
+            selectedProcessor: {},
+            operationMode: 0,
+            messages: [],
+            errors: []
+        },
+        computed: {
+            enabledBackToList() {
+                return this.operationMode != 0
+            }
+        },
+        methods: {
+            loadProcessors() {
+                axiP.get('GetAll').then((response) => {
+                    this.processors = response.data
+                    console.log(response.data)
+                }).catch((err) => {
+                    console.log(err)
+                })
+            },
+            viewProcessor: function (processor) {
+                this.selectedProcessor = processor
+                this.operationMode = 1
+            },
+            createProcessor: function () {
+                this.operationMode = 2
+            },
+            editProcessor: function (processor) {
+                this.selectedProcessor = processor
+                this.operationMode = 3
+            },
+            deleteProcessor: function (processor) {
+                axiP.delete('Delete/' + processor.id).then((response) => {
+                    if (response.data.isSuccess) {
+                        this.messages.push("Processor deleted successfully!")
+                        this.loadProcessors()
+                        setTimeout(() => { this.messages = []; }, 3000)
+                    } else {
+                        this.errors = response.data.messages
+                        setTimeout(() => { this.errors = [] }, 3000)
+                    }
+                }).catch((err) => {
+                    this.errors.push("Error occured during delete!")
+                    setTimeout(() => { this.errors = [] }, 3000)
+                })
+            },
+            backToList: function () {
+                this.selectedProcessor = {}
+                this.operationMode = 0
+            },
+            savedSuccessfully(msg) {
+                this.selectedProcessor = {}
+                this.messages.push(msg)
+                console.log("saved")
+                this.loadProcessors()
+                this.operationMode = 0
+                setTimeout(() => { this.messages = [] }, 3000)
+            },
+            operationCancelled() {
+                this.selectedProcessor = {}
+                this.messages.push("The operation has been cancelled!")
+                console.warn("cancelled")
+                this.operationMode = 0
+                setTimeout(() => { this.messages = [] }, 3000)
+            }
+        }
+    })
+
+    Vue.component('view-component', {
+        props: ['processor'],
+        template: '#view-template'
+    })
+
+    Vue.component('editor-component', {
+        props: ['processor'],
+        template: '#editor-template',
+        data: function () {
+            return {
+                innerProcessor: {},
+                brands: [],
+                isEdit: false,
+                errors: []
+            }
+        },
+        methods: {
+            save() {
+                if (this.isEdit) {
+                    axiP.put('Update', this.innerProcessor).then(this.handleSuccess).catch((err) => {
+                        console.log(err)
+                        this.handleError(['Error occured during processing!'])
+                    })
+                } else {
+                    axiP.post('Create', this.innerProcessor).then(this.handleSuccess).catch((err) => {
+                        console.log(err)
+                        this.handleError(['Error occured during processing!'])
+                    })
+                }
+            },
+            cancel() {
+                this.$emit('cancelled')
+            },
+            handleSuccess(response) {
+                if (response.data.isSuccess) {
+                    this.$emit('saved', this.isEdit ? "Processor edited successfully!" : "Processor created successfully!")
+                } else {
+                    this.handleError(response.data.messages)
+                }
+            },
+            handleError(errorMessages) {
+                this.errors = errorMessages
+                setTimeout(() => { this.errors = [] }, 3000)
+            }
+        },
+        created: function () {
+            if (this.processor != undefined) {
+                this.isEdit = true
+
+                this.innerProcessor = {
+                    id: this.processor.id,
+                    brandId: this.processor.brandId,
+                    name: this.processor.name,
+                    socket: this.processor.socket,
+                    cores: this.processor.cores,
+                    threads: this.processor.threads,
+                    baseClock: this.processor.baseClock,
+                    boostClock: this.processor.boostClock,
+                    isOvercolckable: this.processor.isOvercolckable,
+                    releaseDate: this.processor.releaseDate.split('T')[0],
+                    price: this.processor.price
+                }
+            } else {
+                this.innerProcessor = {
+                    id: 0,
+                    brandId: 0,
+                    name: '',
+                    socket: '',
+                    cores: 0,
+                    threads: 0,
+                    baseClock: 0.0,
+                    boostClock: 0.0,
+                    isOvercolckable: false,
+                    releaseDate: '',
+                    price: 0
+                }
+            }
+
+            axiB.get('GetAll').then((response) => {
+                this.brands = response.data
+            }).catch((err) => {
+                console.log(err)
+            })
+        }
+    })
+</script>
+
+<script type="text/x-template" id="view-template">
+    <div style="text-align:left" class="processor-view-container">
+        <div>
+            <strong>ID</strong><br />
+            <label>{{processor.id}}</label>
+        </div>
+        <div>
+            <strong>Brand ID</strong><br />
+            <label>{{processor.brandId}}</label>
+        </div>
+        <div>
+            <strong>Name</strong><br />
+            <label>{{processor.name}}</label>
+        </div>
+        <div>
+            <strong>Socket</strong><br />
+            <label>{{processor.socket}}</label>
+        </div>
+        <div>
+            <strong>Cores</strong><br />
+            <label>{{processor.cores}}</label>
+        </div>
+        <div>
+            <strong>Threads</strong><br />
+            <label>{{processor.threads}}</label>
+        </div>
+        <div>
+            <strong>Base clock</strong><br />
+            <label>{{processor.baseClock}}</label>
+        </div>
+        <div>
+            <strong>Boost clock</strong><br />
+            <label>{{processor.boostClock}}</label>
+        </div>
+        <div>
+            <strong>Overclockable</strong>
+            <input type="checkbox" disabled="disabled" v-model="processor.isOvercolckable" />
+        </div>
+        <div>
+            <strong>Release date</strong><br />
+            <label>{{processor.releaseDate.split("T")[0]}}</label>
+        </div>
+        <div>
+            <strong>Price</strong><br />
+            <label>{{processor.price}}</label>
+        </div>
+    </div>
+</script>
+
+<script type="text/x-template" id="editor-template">
+    <div style="text-align:left" class="processor-view-container">
+        <div v-if="errors.length > 0">
+            <span v-for="msg in errors" style="color:red;font-weight:bold">{{msg}}</span>
+        </div>
+        <div>
+            <strong>Brand</strong><br />
+            <select id="brand-selector" v-model="innerProcessor.brandId" class="form-control">
+                <option v-for="brand in brands" v-bind:value="brand.id">{{brand.name}}</option>
+            </select>
+        </div>
+        <div>
+            <strong>Name</strong><br />
+            <input type="text" v-model="innerProcessor.name" class="form-control"/>
+        </div>
+        <div>
+            <strong>Socket</strong><br />
+            <input type="text" v-model="innerProcessor.socket" class="form-control"/>
+        </div>
+        <div>
+            <strong>Cores</strong><br />
+            <input type="number" v-model="innerProcessor.cores" class="form-control"/>
+        </div>
+        <div>
+            <strong>Threads</strong><br />
+            <input type="number" v-model="innerProcessor.threads" class="form-control"/>
+        </div>
+        <div>
+            <strong>Base clock</strong><br />
+            <input type="number" v-model="innerProcessor.baseClock" class="form-control"/>
+        </div>
+        <div>
+            <strong>Boost clock</strong><br />
+            <input type="number" v-model="innerProcessor.boostClock" class="form-control"/>
+        </div>
+        <div>
+            <strong>Overclockable</strong>
+            <input type="checkbox" v-model="innerProcessor.isOvercolckable"/>
+        </div>
+        <div>
+            <strong>Release date</strong><br />
+            <input type="date" v-model="innerProcessor.releaseDate" class="form-control"/>
+        </div>
+        <div>
+            <strong>Price</strong><br />
+            <input type="number" v-model="innerProcessor.price" class="form-control"/>
+        </div>
+        <div class="float-right pt-3">
+            <button class="btn btn-primary" v-on:click="save">Mentés</button>
+            <button class="btn btn-secondary" v-on:click="cancel">Mégse</button>
+        </div>
+    </div>
+</script>

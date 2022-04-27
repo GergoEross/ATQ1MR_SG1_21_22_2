@@ -18,6 +18,7 @@ namespace ATQ1MR_HFT_2021221.Endpoint
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllers();
+            services.AddCors();
 
             BLInitialization.InitBlServices(services);
         }
@@ -31,6 +32,7 @@ namespace ATQ1MR_HFT_2021221.Endpoint
             }
 
             app.UseRouting();
+            app.UseCors(x => x.AllowAnyMethod().AllowAnyHeader().SetIsOriginAllowed(origin => true).AllowCredentials());
 
             app.UseEndpoints(endpoints =>
             {
