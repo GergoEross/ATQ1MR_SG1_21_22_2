@@ -60,6 +60,9 @@
             <template v-else-if="operationMode == 1">
                 <view-component v-bind:processor="selectedProcessor"></view-component>
             </template>
+            <template v-else-if="operationMode == 2">
+                <editor-component v-on:saved="savedSuccessfully" v-on:cancelled="operationCancelled"></editor-component>
+            </template>
             <template v-else>
                 <editor-component v-bind:processor="selectedProcessor" v-on:saved="savedSuccessfully" v-on:cancelled="operationCancelled"></editor-component>
             </template>
@@ -196,7 +199,7 @@
             }
         },
         created: function () {
-            if (this.processor.id != undefined) {
+            if (this.processor != undefined) {
                 this.isEdit = true
 
                 this.innerProcessor = {
